@@ -1,4 +1,4 @@
-package app.doctor_todo
+package com.example.todo
 
 import io.flutter.embedding.android.FlutterActivity
 
