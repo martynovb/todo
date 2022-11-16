@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:todo/domain/bloc.dart';
+import 'package:todo/domain/login_bloc.dart';
 import 'package:todo/domain/model_info.dart';
 import 'package:todo/presentation/Sign_up.dart';
+
+import '../domain/base/base_state.dart';
+import '../domain/bloc/login_bloc.dart';
+import '../domain/bloc/login_state.dart';
+
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -11,6 +16,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  LoginBloc _bloc = LoginBloc();
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -25,7 +31,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    Bloc1 _bloc = Bloc1();
+    new Bloc();
     return Scaffold(
       appBar: AppBar(
         title: Text('Registr Form'),
@@ -33,49 +39,65 @@ class _SignInState extends State<SignIn> {
       ),
       body: StreamBuilder(
         stream: _bloc.outputStateStream,
-        initialData: , // ?
-        builder:  (context, snapshot){
+        initialData: NoneState(), // ?
+        builder: (context, snapshot) {
+           // state
+
+          if(snapshot.data == LoginResultState && snapshot.data.result){
+            // redirect to screen
+          } else if(snapshot.data == LoginResultState && !snapshot.data.result){
+            // show error
+          }
           return
-          Form(
-            key: _formKey,
-            child: ListView(
-              padding: EdgeInsets.all(20.0),
-              children: [
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                      labelText: 'Email', suffixIcon: Icon(Icons.delete_outline)),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (val) => val!.isEmpty ? 'Name is required' : null,
-                  onSaved: (value) => newUser.email = value,
-                ),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    suffixIcon: Icon(Icons.delete_outline),
+            Form(
+              key: _formKey,
+              child: ListView(
+                padding: EdgeInsets.all(20.0),
+                children: [
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                        labelText: 'Email',
+                        suffixIcon: Icon(Icons.delete_outline)),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (val) =>
+                    val!.isEmpty
+                        ? 'Name is required'
+                        : null,
+                    onSaved: (value) => newUser.email = value,
                   ),
-                  keyboardType: TextInputType.multiline,
-                  onSaved: (value) => newUser.password = value,
-                  validator: (val) => val!.isEmpty ? 'Name is required' : null,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                OutlinedButton(
-                    onPressed: () {}, child: Text('sign in with google')),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Text('Sign in'),
-                ),
-                ElevatedButton(onPressed: () {
-                  _submitForm();
-                  Route route = MaterialPageRoute(builder: (context) => SignAp());
-                  Navigator.push(context, route);
-                }, child: Text('Sign Up screen'))
-              ],
-            ),
-          );
+                  TextFormField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      suffixIcon: Icon(Icons.delete_outline),
+                    ),
+                    keyboardType: TextInputType.multiline,
+                    onSaved: (value) => newUser.password = value,
+                    validator: (val) =>
+                    val!.isEmpty
+                        ? 'Name is required'
+                        : null,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  OutlinedButton(
+                      onPressed: () {}, child: Text('sign in with google')),
+                  ElevatedButton(
+                    onPressed: () {
+                      _submitForm();
+                    },
+                    child: Text('Sign in'),
+                  ),
+                  ElevatedButton(onPressed: () {
+                    Route route = MaterialPageRoute(
+                        builder: (context) => SignAp());
+                    Navigator.push(context, route);
+                  }, child: Text('Sign Up screen'))
+                ],
+              ),
+            );
         },
 
       ),
@@ -84,8 +106,9 @@ class _SignInState extends State<SignIn> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-    _formKey.currentState?.save();
-    }else
+      _bloc.inputEventSink.add(
+          LoginEvent(_emailController.text, _passwordController.text));
+    } else
       print('Form is not valid ');
   }
 
