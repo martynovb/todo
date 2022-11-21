@@ -1,12 +1,12 @@
 import '../base/base_event.dart';
 
-class LoginEvent extends BaseEvent {
+class LoginEvent  {
   String UserName;
   String email;
   String password;
-  String RepeatPassword;
+  String repeatPassword;
 
-  LoginEvent( this.email,   this.password, this.RepeatPassword, this.UserName);
+  LoginEvent( this.email,   this.password, this.repeatPassword, this.UserName);
 }
 
 class LoginWithGoogle extends BaseEvent {}

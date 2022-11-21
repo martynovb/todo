@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:todo/presentation/Sign_up.dart';
+import 'package:todo/presentation/sign_up.dart';
 
 import '../domain/base/base_state.dart';
 import '../domain/bloc/login_bloc.dart';
@@ -79,7 +79,7 @@ class _SignInState extends State<SignIn> {
                   ),
                   ElevatedButton(onPressed: () {
                     Route route = MaterialPageRoute(
-                        builder: (context) => SignAp());
+                        builder: (context) => SignUp());
                     Navigator.push(context, route);
                   }, child: Text('Sign Up screen'))
                 ],
