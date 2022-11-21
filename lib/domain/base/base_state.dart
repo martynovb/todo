@@ -1,3 +1,11 @@
-abstract class BaseState {}
+abstract class UserState {}
 
-class NoneState {}
+class UserEmptyState extends UserState {}
+class UserLoadingState extends UserState  {}
+class UserLoadedState extends UserState{
+
+}
+class UserErrorState extends UserState{}
+
+
+

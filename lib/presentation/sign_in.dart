@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:todo/domain/login_bloc.dart';
-import 'package:todo/domain/model_info.dart';
+
 import 'package:todo/presentation/Sign_up.dart';
 
 import '../domain/base/base_state.dart';
 import '../domain/bloc/login_bloc.dart';
+import '../domain/bloc/login_event.dart';
 import '../domain/bloc/login_state.dart';
 
 
@@ -16,11 +16,10 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  LoginBloc _bloc = LoginBloc();
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  infoSignIn newUser = infoSignIn();
+
 
   @override
   void dispose() {
@@ -31,24 +30,12 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    new Bloc();
     return Scaffold(
       appBar: AppBar(
         title: Text('Registr Form'),
         centerTitle: true,
       ),
-      body: StreamBuilder(
-        stream: _bloc.outputStateStream,
-        initialData: NoneState(), // ?
-        builder: (context, snapshot) {
-           // state
-
-          if(snapshot.data == LoginResultState && snapshot.data.result){
-            // redirect to screen
-          } else if(snapshot.data == LoginResultState && !snapshot.data.result){
-            // show error
-          }
-          return
+      body:
             Form(
               key: _formKey,
               child: ListView(
@@ -64,7 +51,7 @@ class _SignInState extends State<SignIn> {
                     val!.isEmpty
                         ? 'Name is required'
                         : null,
-                    onSaved: (value) => newUser.email = value,
+                    onSaved: (value) => LoginEvent("",value as String, "","") ,
                   ),
                   TextFormField(
                     controller: _passwordController,
@@ -73,7 +60,7 @@ class _SignInState extends State<SignIn> {
                       suffixIcon: Icon(Icons.delete_outline),
                     ),
                     keyboardType: TextInputType.multiline,
-                    onSaved: (value) => newUser.password = value,
+                    onSaved: (value) => LoginEvent("","",value as String,""),
                     validator: (val) =>
                     val!.isEmpty
                         ? 'Name is required'
@@ -97,17 +84,14 @@ class _SignInState extends State<SignIn> {
                   }, child: Text('Sign Up screen'))
                 ],
               ),
-            );
-        },
-
-      ),
-    );
+            ),
+      );
   }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       _bloc.inputEventSink.add(
-          LoginEvent(_emailController.text, _passwordController.text));
+          LoginEvent("", _emailController.text, _passwordController.text,"" ));
     } else
       print('Form is not valid ');
   }

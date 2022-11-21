@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo/domain/base/base_bloc.dart';
+import 'package:todo/domain/usecase/login_use_case.dart';
+
+import '../domain/base/base_state.dart';
+import '../domain/bloc/login_event.dart';
 
 class SignAp extends StatefulWidget {
   const SignAp({Key? key}) : super(key: key);
@@ -8,12 +14,14 @@ class SignAp extends StatefulWidget {
 }
 
 class _SignApState extends State<SignAp> {
+  final _formKey = GlobalKey<FormState>();
   final _nameContorller = TextEditingController();
   final _secondNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _againpasswordController = TextEditingController();
-  final _numberphoneController = TextEditingController();
+ 
+
   @override
   void dispose() {
     _nameContorller.dispose();
@@ -21,58 +29,94 @@ class _SignApState extends State<SignAp> {
     _emailController.dispose();
     _passwordController.dispose();
     _againpasswordController.dispose();
-    _numberphoneController.dispose();
+
     super.dispose();
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Sign Ap'),
-        centerTitle: true,
-      ),
-      body: Form(
-        child: ListView(children: [
-          TextFormField(
-            controller: _nameContorller,
-            decoration: InputDecoration(
-              labelText: 'Name',
-              suffixIcon: Icon(Icons.delete_outline),
+    return BlocBuilder(
+      builder: (context,state){
+        if(state is UserLoadedState  ){
+          return   Scaffold(
+            appBar: AppBar(
+              title: Text('Sign Ap'),
+              centerTitle: true,
             ),
-          ),
-          TextFormField(
-            controller: _secondNameController,
-            decoration: InputDecoration(
-                labelText: 'Second name',
-                suffixIcon: Icon(Icons.delete_outline)),
-          ),
-          TextFormField(
-            controller: _emailController,
-            decoration: InputDecoration(
-                labelText: 'Email',
-                suffixIcon: Icon(Icons.delete_outline)),
-          ),
-          TextFormField(
-            controller: _passwordController,
-            decoration: InputDecoration(
-                labelText: 'password',
-                suffixIcon: Icon(Icons.delete_outline)),
-          ),
-          TextFormField(
-            controller: _againpasswordController,
-            decoration: InputDecoration(
-                labelText: 'try again',
-                suffixIcon: Icon(Icons.delete_outline)),
-          ),
-          TextFormField(
-            controller: _numberphoneController,
-            decoration: InputDecoration(
-                labelText: 'Number phone',
-                suffixIcon: Icon(Icons.delete_outline)),
-          ),
-          ElevatedButton(onPressed: (){}, child: Text('Sign up'))
-        ]),
-      ),
-    );
+            body: Form(
+              key: _formKey,
+              child: ListView(children: [
+                TextFormField(
+                  controller: _nameContorller,
+                  decoration: InputDecoration(
+                    labelText: 'Username',
+                    suffixIcon: Icon(Icons.delete_outline
+                    ),
+
+                  ),
+                  validator: (val) =>
+                  val!.isEmpty
+                      ? 'Name is required'
+                      : null,
+                  onSaved: (value) => LoginEvent(value as String,"", "",""),
+                ),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                      labelText: 'Email',
+                      suffixIcon: Icon(Icons.delete_outline)),
+                  validator: (val) =>
+                  val!.isEmpty
+                      ? 'Name is required'
+                      : null,
+                  onSaved: (value) => LoginEvent("",value as String, "","") ,
+                ),
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                      labelText: 'password',
+                      suffixIcon: Icon(Icons.delete_outline)
+                  ),
+                  validator: (val) =>
+                  val!.isEmpty
+                      ? 'Name is required'
+                      : null,
+                  onSaved: (value) => LoginEvent("","", value as String,""),
+
+                ),
+                TextFormField(
+                  controller: _againpasswordController,
+                  decoration: InputDecoration(
+                      labelText: 'Repeat password',
+                      suffixIcon: Icon(Icons.delete_outline)),
+                  validator: (val) =>
+                  val!.isEmpty
+                      ? 'Name is required'
+                      : null,
+                  onSaved: (value) => LoginEvent("","", "",value as String),
+                ),
+
+                ElevatedButton(onPressed: (){
+                  _submitFormSignUp();
+                }, child: Text('Sign up'))
+              ]),
+            ),
+          );
+
+  }else if( state is UserLoadingState){
+          return _loadingIndicator();
+        } else if( state is UserErrorState){
+          return //???
+        }
+      } ;
+
+
   }
-}
+  void _submitFormSignUp(){
+    if(_formKey.currentState!.validate()){
+      LoginEvent("", _emailController.text, _passwordController.text,"" );
+    } else
+    print('Form is not valid ');
+  }
+    }
+
+

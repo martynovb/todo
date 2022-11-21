@@ -8,7 +8,7 @@ import 'login_state.dart';
 
 class LoginBloc {
   final _inputEventController = StreamController<BaseEvent>();
-  LoginUseCase _loginUseCase;
+  late LoginUseCase _loginUseCase;
 
   LoginBloc() {
     _loginUseCase = LoginUseCase(AuthRepository());
@@ -41,17 +41,4 @@ class LoginBloc {
 abstract class BlocEvent {}
 
 
-// ui + bloc
-void a(){
-  final result = b();
-}
 
-//domain / use case
-bool b(){
-  return c();
-}
-
-// repo // authRepository
-bool c(){
-  return true;
-}
