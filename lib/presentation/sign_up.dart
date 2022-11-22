@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo/domain/base/base_bloc.dart';
-import 'package:todo/domain/usecase/login_use_case.dart';
+import 'package:todo/domain/bloc/sign_up/sign_up_events.dart';
+import 'package:todo/domain/bloc/sign_up/sign_up_states.dart';
 
-import '../domain/base/base_state.dart';
-import '../domain/bloc/login_event.dart';
+
+
 import '../domain/bloc/sign_up/sign_up_bloc.dart';
 
 class SignUp extends StatefulWidget {
@@ -62,7 +62,6 @@ class _SignUpState extends State<SignUp> {
                     ),
                     validator: (val) =>
                         val!.isEmpty ? 'Name is required' : null,
-                    onSaved: (value) => LoginEvent(value as String, "", "", ""),
                   ),
                   TextFormField(
                     controller: _emailController,
@@ -71,25 +70,20 @@ class _SignUpState extends State<SignUp> {
                         suffixIcon: Icon(Icons.delete_outline)),
                     validator: (val) =>
                         val!.isEmpty ? 'Name is required' : null,
-                    onSaved: (value) => LoginEvent("", value as String, "", ""),
                   ),
                   TextFormField(
                     controller: _passwordController,
                     decoration: InputDecoration(
                         labelText: 'password',
                         suffixIcon: Icon(Icons.delete_outline)),
-                    validator: (val) =>
-                        val!.isEmpty ? 'Name is required' : null,
-                    onSaved: (value) => LoginEvent("", "", value as String, ""),
+                    validator: _validatePassword,
                   ),
                   TextFormField(
                     controller: _againpasswordController,
                     decoration: InputDecoration(
                         labelText: 'Repeat password',
                         suffixIcon: Icon(Icons.delete_outline)),
-                    validator: (val) =>
-                        val!.isEmpty ? 'Name is required' : null,
-                    onSaved: (value) => LoginEvent("", "", "", value as String),
+                    validator: _validatePassword,
                   ),
                   ElevatedButton(
                       onPressed: () {
@@ -105,17 +99,18 @@ class _SignUpState extends State<SignUp> {
             return const Center(
               child: Text('Error'),
             );
-          } else if(state is UserCreatedState){
+          } else if (state is UserCreatedState) {
             // redirect to HomePage
             return const Center(
               child: Text('NONE'),
             );
-        } else{
+          } else {
             return const Center(
               child: Text('NONE'),
             );
           }
-        });
+        }
+        );
   }
 
   Widget _loadingIndicator() {
@@ -124,6 +119,7 @@ class _SignUpState extends State<SignUp> {
 
   void _submitFormSignUp() {
     if (_formKey.currentState!.validate()) {
+      _formKey.currentState?.save();
       _signUpBloc.add(SignUpEvent(
         userName: _nameContorller.text,
         email: _emailController.text,
@@ -131,5 +127,13 @@ class _SignUpState extends State<SignUp> {
       ));
     } else
       print('Form is not valid ');
+  }
+
+  String? _validatePassword(String? value) {
+    if (_passwordController.text != _againpasswordController.text) {
+      return 'Password does not match';
+    } else {
+      return null;
+    }
   }
 }

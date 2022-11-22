@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo/domain/bloc/sign_in/sign_in_bloc.dart';
+import 'package:todo/domain/bloc/sign_in/sign_in_state.dart';
 
 import 'package:todo/presentation/sign_up.dart';
-
-import '../domain/base/base_state.dart';
-import '../domain/bloc/login_bloc.dart';
-import '../domain/bloc/login_event.dart';
-import '../domain/bloc/login_state.dart';
-
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -16,10 +13,16 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  late final SignInBloc _signInBloc;
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  @override
+  void didChangeDependencies() {
+    _signInBloc= BlocProvider.of<SignInBloc>(context);
+    super.didChangeDependencies();
+  }
 
   @override
   void dispose() {
@@ -30,12 +33,16 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Registr Form'),
-        centerTitle: true,
-      ),
-      body:
+    return BlocBuilder(
+      bloc: _signInBloc,
+      builder: (context, state) {
+        if (state is UserLoadedState) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Registr Form'),
+              centerTitle: true,
+            ),
+            body:
             Form(
               key: _formKey,
               child: ListView(
@@ -51,7 +58,7 @@ class _SignInState extends State<SignIn> {
                     val!.isEmpty
                         ? 'Name is required'
                         : null,
-                    onSaved: (value) => LoginEvent("",value as String, "","") ,
+
                   ),
                   TextFormField(
                     controller: _passwordController,
@@ -60,10 +67,10 @@ class _SignInState extends State<SignIn> {
                       suffixIcon: Icon(Icons.delete_outline),
                     ),
                     keyboardType: TextInputType.multiline,
-                    onSaved: (value) => LoginEvent("","",value as String,""),
+
                     validator: (val) =>
                     val!.isEmpty
-                        ? 'Name is required'
+                        ? 'Please check password'
                         : null,
                   ),
                   SizedBox(
@@ -85,13 +92,33 @@ class _SignInState extends State<SignIn> {
                 ],
               ),
             ),
-      );
+          );
+        } else if (state is UserLoadingState) {
+          return _loadingIndicator();
+        } else if (state is UserErrorState) {
+          return const Center(
+            child: Text('Error'),
+          );
+        } else if (state is UserCreatedState) {
+          // redirect to HomePage
+          return const Center(
+            child: Text('NONE'),
+          );
+        } else {
+          return const Center(
+            child: Text('NONE'),
+          );
+        }
+      }
+    );
+  }
+  Widget _loadingIndicator() {
+    return Center(child: Text('Loading...'));
   }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      _bloc.inputEventSink.add(
-          LoginEvent("", _emailController.text, _passwordController.text,"" ));
+
     } else
       print('Form is not valid ');
   }
