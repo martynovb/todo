@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:todo/domain/bloc/sign_up/sign_up_bloc.dart';
+import 'package:todo/domain/usecase/login_use_case_SignUp.dart';
 import 'package:todo/presentation/Sign_up.dart';
 import 'package:todo/presentation/sign_in.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'data/repo/auth_repository.dart';
+import 'domain/bloc/sign_in/sign_in_bloc.dart';
+import 'domain/usecase/login_use_case_SignIn.dart';
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  final userRepository = LoginUseCase();
+  final userRepository2 = LoginUseCase2();
 
-  const MyApp({super.key});
+   MyApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -21,8 +28,10 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => SignUpBloc(useCase: ), // Репозиторий + usecase
-        )
+          create: (context) => SignUpBloc(signUpUseCase: userRepository2 ), // Репозиторий + usecase
+        ),
+        BlocProvider(
+            create: (context) => SignInBloc(signInUseCase: userRepository ))
       ],
       child: MaterialApp(
         home: SignIn(),

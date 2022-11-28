@@ -5,6 +5,8 @@ import 'package:todo/domain/bloc/sign_in/sign_in_state.dart';
 
 import 'package:todo/presentation/sign_up.dart';
 
+import '../domain/bloc/sign_in/sign_in_events.dart';
+
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
 
@@ -118,7 +120,11 @@ class _SignInState extends State<SignIn> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-
+        _formKey.currentState?.save();
+        _signInBloc.add(SignInEvent(
+            _emailController.text,
+            _passwordController.text
+        ));
     } else
       print('Form is not valid ');
   }

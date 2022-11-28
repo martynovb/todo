@@ -4,10 +4,12 @@ import 'package:todo/domain/bloc/sign_in/sign_in_state.dart';
 
 import 'package:bloc/bloc.dart';
 
+import '../../usecase/login_use_case_SignIn.dart';
+
 class SignInBloc extends Bloc<UserEvent,UserState>{
-  var signInUseCase;
+   LoginUseCase signInUseCase;
   var loginWithGoogleUseCase;
-  SignInBloc() : super (UserLoadedState() ){
+  SignInBloc({required this.signInUseCase}) : super (UserLoadedState() ){
     on<SignInEvent>((event, emit) async {
       emit(UserLoadingState());
       try {
