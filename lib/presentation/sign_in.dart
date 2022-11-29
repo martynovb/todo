@@ -6,6 +6,7 @@ import 'package:todo/domain/bloc/sign_in/sign_in_state.dart';
 import 'package:todo/presentation/sign_up.dart';
 
 import '../domain/bloc/sign_in/sign_in_events.dart';
+import 'home_page.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -101,8 +102,9 @@ class _SignInState extends State<SignIn> {
           return const Center(
             child: Text('Error'),
           );
-        } else if (state is UserCreatedState) {
-          // redirect to HomePage
+        } else if (state is UserLoadedState) {
+          Navigator.push(context,MaterialPageRoute(builder: (context) => HomePage(),
+          ));
           return const Center(
             child: Text('NONE'),
           );

@@ -16,7 +16,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   final userRepository = LoginUseCase();
-  final userRepository2 = LoginUseCase2();
+  final userRepositoryRegistr = LoginUseCaseRegistration();
 
    MyApp({super.key});
 
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => SignUpBloc(signUpUseCase: userRepository2 ), // Репозиторий + usecase
+          create: (context) => SignUpBloc(signUpUseCase: userRepositoryRegistr ), // Репозиторий + usecase
         ),
         BlocProvider(
             create: (context) => SignInBloc(signInUseCase: userRepository ))

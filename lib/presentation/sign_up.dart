@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo/domain/bloc/sign_up/sign_up_events.dart';
 import 'package:todo/domain/bloc/sign_up/sign_up_states.dart';
+import 'package:todo/presentation/home_page.dart';
 
 
 
@@ -99,8 +100,8 @@ class _SignUpState extends State<SignUp> {
             return const Center(
               child: Text('Error'),
             );
-          } else if (state is UserCreatedState) {
-            // redirect to HomePage
+          } else if (state is UserLoadedState) {
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> HomePage()));
             return const Center(
               child: Text('NONE'),
             );

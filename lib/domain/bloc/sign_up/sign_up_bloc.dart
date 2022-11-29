@@ -4,7 +4,7 @@ import 'package:todo/domain/bloc/sign_up/sign_up_states.dart';
 import 'package:todo/domain/usecase/login_use_case_SignUp.dart';
 
 class SignUpBloc extends Bloc<UserEvent, UserState> {
-  LoginUseCase2 signUpUseCase;
+  LoginUseCaseRegistration signUpUseCase;
   SignUpBloc({ required this.signUpUseCase}) : super(UserLoadedState()) {
     on<SignUpEvent>((event, emit) async {
       emit(UserLoadingState());

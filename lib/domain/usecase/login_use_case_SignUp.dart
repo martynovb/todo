@@ -1,10 +1,10 @@
 
 import '../../data/repo/auth_repository2.dart';
 
-class LoginUseCase2 {
+class LoginUseCaseRegistration {
   final AuthRepository2 authRepository;
 
-  LoginUseCase2(this.authRepository);
+  LoginUseCaseRegistration(this.authRepository);
 
   bool execute(String email, String password, String name) =>
       authRepository.login(email, password, name);
