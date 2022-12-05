@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo/domain/bloc/navigator_bloc.dart';
 import 'package:todo/domain/bloc/sign_in/sign_in_bloc.dart';
 import 'package:todo/domain/bloc/sign_in/sign_in_state.dart';
 
@@ -17,13 +18,15 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   late final SignInBloc _signInBloc;
+  late final NavigatorBloc _navigatorBloc;
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   @override
   void didChangeDependencies() {
-    _signInBloc= BlocProvider.of<SignInBloc>(context);
+    _signInBloc = BlocProvider.of<SignInBloc>(context);
+    _navigatorBloc = BlocProvider.of<NavigatorBloc>(context);
     super.didChangeDependencies();
   }
 
@@ -36,99 +39,86 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder(
-      bloc: _signInBloc,
-      builder: (context, state) {
-        if (state is UserLoadedState) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Registr Form'),
-              centerTitle: true,
-            ),
-            body:
-            Form(
-              key: _formKey,
-              child: ListView(
-                padding: EdgeInsets.all(20.0),
-                children: [
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                        labelText: 'Email',
-                        suffixIcon: Icon(Icons.delete_outline)),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (val) =>
-                    val!.isEmpty
-                        ? 'Name is required'
-                        : null,
-
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Registr Form'),
+          centerTitle: true,
+        ),
+        body: BlocBuilder(
+            bloc: _signInBloc,
+            builder: (context, state) {
+              if (state is UserLoadedState) {
+                return Form(
+                  key: _formKey,
+                  child: ListView(
+                    padding: EdgeInsets.all(20.0),
+                    children: [
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                            labelText: 'Email',
+                            suffixIcon: Icon(Icons.delete_outline)),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (val) =>
+                            val!.isEmpty ? 'Name is required' : null,
+                      ),
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          suffixIcon: Icon(Icons.delete_outline),
+                        ),
+                        keyboardType: TextInputType.multiline,
+                        validator: (val) =>
+                            val!.isEmpty ? 'Please check password' : null,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      OutlinedButton(
+                          onPressed: () {}, child: Text('sign in with google')),
+                      ElevatedButton(
+                        onPressed: () {
+                          _submitForm();
+                        },
+                        child: Text('Sign in'),
+                      ),
+                      ElevatedButton(
+                          onPressed: () =>
+                              _navigatorBloc.add(NavigateToSignUp()),
+                          child: Text('Sign Up screen'))
+                    ],
                   ),
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      suffixIcon: Icon(Icons.delete_outline),
-                    ),
-                    keyboardType: TextInputType.multiline,
-
-                    validator: (val) =>
-                    val!.isEmpty
-                        ? 'Please check password'
-                        : null,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  OutlinedButton(
-                      onPressed: () {}, child: Text('sign in with google')),
-                  ElevatedButton(
-                    onPressed: () {
-                      _submitForm();
-                    },
-                    child: Text('Sign in'),
-                  ),
-                  ElevatedButton(onPressed: () {
-                    Route route = MaterialPageRoute(
-                        builder: (context) => SignUp());
-                    Navigator.push(context, route);
-                  }, child: Text('Sign Up screen'))
-                ],
-              ),
-            ),
-          );
-        } else if (state is UserLoadingState) {
-          return _loadingIndicator();
-        } else if (state is UserErrorState) {
-          return const Center(
-            child: Text('Error'),
-          );
-        } else if (state is UserLoadedState) {
-          Navigator.push(context,MaterialPageRoute(builder: (context) => HomePage(),
-          ));
-          return const Center(
-            child: Text('NONE'),
-          );
-        } else {
-          return const Center(
-            child: Text('NONE'),
-          );
-        }
-      }
-    );
+                );
+              } else if (state is UserLoadingState) {
+                return _loadingIndicator();
+              } else if (state is UserErrorState) {
+                return const Center(
+                  child: Text('Error'),
+                );
+              } else if (state is UserLoadedState) {
+                Navigator.pushNamed(context, 'HomePage');
+                return const Center(
+                  child: Text('NONE'),
+                );
+              } else {
+                return const Center(
+                  child: Text('NONE'),
+                );
+              }
+            }));
   }
+
   Widget _loadingIndicator() {
     return Center(child: Text('Loading...'));
   }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-        _formKey.currentState?.save();
-        _signInBloc.add(SignInEvent(
-            _emailController.text,
-            _passwordController.text
-        ));
+      _formKey.currentState?.save();
+      _signInBloc
+          .add(SignInEvent(_emailController.text, _passwordController.text));
     } else
       print('Form is not valid ');
   }
-
 }

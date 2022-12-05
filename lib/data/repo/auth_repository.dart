@@ -1,9 +1,5 @@
-class AuthRepository {
+abstract class AuthRepository {
+ Future<bool> signIn(String email, String password);
 
-
-
-  bool login(String email, String password){
-    // send to the server
-    return true;
-  }
+  Future<bool> signUp(String email, String password, String name);
 }

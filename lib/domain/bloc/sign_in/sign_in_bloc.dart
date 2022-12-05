@@ -1,42 +1,29 @@
+import 'package:todo/domain/bloc/navigator_bloc.dart';
 import 'package:todo/domain/bloc/sign_in/sign_in_events.dart';
 import 'package:todo/domain/bloc/sign_in/sign_in_state.dart';
 
 
 import 'package:bloc/bloc.dart';
 
-import '../../usecase/login_use_case_SignIn.dart';
+import '../../usecase/sign_in_use_case.dart';
 
-class SignInBloc extends Bloc<UserEvent,UserState>{
-   LoginUseCase signInUseCase;
-  var loginWithGoogleUseCase;
-  SignInBloc({required this.signInUseCase}) : super (UserLoadedState() ){
+class SignInBloc extends Bloc<UserEvent,UserState> {
+  SignInUseCase signInUseCase;
+  NavigatorBloc navigatorBloc;
+
+  SignInBloc({required this.navigatorBloc, required this.signInUseCase}) : super (UserLoadedState()) {
     on<SignInEvent>((event, emit) async {
       emit(UserLoadingState());
       try {
-        final result = signInUseCase.execute(event.email, event.password);
-        result ? emit( UserCreatedState()) : emit(UserErrorState());
+        final result = await signInUseCase.execute(event.email, event.password);
+        result ? navigatorBloc.add(NavigateToHome()) : emit(UserErrorState());
+        emit(UserLoadedState());
       } catch (_) {
         emit(UserErrorState());
       }
     },
     );
-    on<SignWithGoogle>((event, emit) async {
-      emit(UserLoadingState());
-      try {
-        final result = loginWithGoogleUseCase;
-        result ? emit( UserCreatedState()) : emit(UserErrorState());
-      } catch (_) {
-        emit(UserErrorState());
-      }
-    });
   }
 
 
 }
-
-
-
-
-
-
-
