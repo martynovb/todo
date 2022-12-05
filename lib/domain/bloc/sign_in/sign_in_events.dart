@@ -7,4 +7,4 @@ class SignInEvent extends UserEvent{
 
   SignInEvent(this.email, this.password);
 }
-class SignWithGoogle extends UserEvent{}
+class SignUpEvent extends UserEvent{}

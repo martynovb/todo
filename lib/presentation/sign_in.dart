@@ -41,8 +41,14 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Registr Form'),
-          centerTitle: true,
+          backgroundColor: Colors.white,
+          title: Text(
+            'Sign IN',
+            style: TextStyle(
+                fontSize: 40,
+                fontStyle: FontStyle.normal,
+                color: Colors.lightBlue.shade900),
+          ),
         ),
         body: BlocBuilder(
             bloc: _signInBloc,
@@ -53,6 +59,9 @@ class _SignInState extends State<SignIn> {
                   child: ListView(
                     padding: EdgeInsets.all(20.0),
                     children: [
+                      SizedBox(
+                        height: 100,
+                      ),
                       TextFormField(
                         controller: _emailController,
                         decoration: InputDecoration(
@@ -73,20 +82,50 @@ class _SignInState extends State<SignIn> {
                             val!.isEmpty ? 'Please check password' : null,
                       ),
                       SizedBox(
-                        height: 20,
+                        height: 40,
                       ),
-                      OutlinedButton(
-                          onPressed: () {}, child: Text('sign in with google')),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Forgot Password?',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontStyle: FontStyle.normal,
+                                  color: Colors.blue.shade900))
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
                       ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.yellow.shade600),
                         onPressed: () {
                           _submitForm();
                         },
-                        child: Text('Sign in'),
+                        child: Text('Sign in',
+                            style: TextStyle(
+                                fontSize: 18,
+
+                                color: Colors.black,
+                                fontStyle: FontStyle.italic)
+                        ),
                       ),
-                      ElevatedButton(
-                          onPressed: () =>
-                              _navigatorBloc.add(NavigateToSignUp()),
-                          child: Text('Sign Up screen'))
+                      SizedBox(height: 8,),
+                      Row(children: [
+                        Text('Do not have an account?'),
+                        Container(
+                          padding: EdgeInsets.all(15),
+                          child:
+                          ElevatedButton(onPressed: () {
+                            _buttonSignUp();
+                          },
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.white),
+                            child:  Text('Sign UP ', style: TextStyle( color: Colors.blue.shade900,)),)
+                          ,
+                        ),
+                      ],)
                     ],
                   ),
                 );
@@ -101,9 +140,15 @@ class _SignInState extends State<SignIn> {
                 return const Center(
                   child: Text('NONE'),
                 );
-              } else {
+
+              } else if (state is UserGoToSignUpState) {
+                Navigator.pushNamed(context, '/sign_up');
                 return const Center(
                   child: Text('NONE'),
+                );
+              } else {
+                return const Center(
+                  child: Text("None"),
                 );
               }
             }));
@@ -121,4 +166,7 @@ class _SignInState extends State<SignIn> {
     } else
       print('Form is not valid ');
   }
+ void _buttonSignUp(){
+    _signInBloc.add(SignUpEvent());
+ }
 }

@@ -25,6 +25,8 @@ class NavigatorBloc extends Bloc<NavigatorEvent, dynamic> {
   }
 }
 
+
+
 abstract class NavigatorEvent {}
 
 class NavigateToHome extends NavigatorEvent {}
